@@ -1,0 +1,86 @@
+# CISC 3320 - Homework 4
+**Producer-Consumer Problem**
+
+Jiaming Zhu
+
+## 1. Introduction
+
+In this homework, I implemented the producer-consumer problem using Python threading and multiprocessing. Both programs use a bounded buffer to share items between producers and consumers.
+
+## 2. Implementation
+
+Both versions use the same settings:
+
+- 2 producers
+- 2 consumers
+- Buffer capacity: 3
+- 5 items per producer
+- Total items: 10
+
+The threading version uses `threading.Thread` and `queue.Queue`.
+
+The multiprocessing version uses `multiprocessing.Process` and `multiprocessing.Queue`.
+
+The queue makes producers wait when the buffer is full and consumers wait when the buffer is empty.
+
+After the producers finish, the main program sends a `None` value for each consumer to stop. The program uses `join()` to wait for all workers to finish.
+
+## 3. Testing Results
+
+I ran each version five times using the same workload.
+
+| Run | Threading (seconds) | Multiprocessing (seconds) |
+|---|---|---|
+| 1 | 1.0041 | 1.0298 |
+| 2 | 1.0608 | 1.0508 |
+| 3 | 1.0273 | 1.1255 |
+| 4 | 1.0954 | 1.0733 |
+| 5 | 1.0066 | 1.0449 |
+| Average | 1.0388 | 1.0649 |
+
+Both versions produced and consumed all 10 items. All producers and consumers finished, and the buffer was empty at the end.
+
+## 4. Comparison
+
+Threading was slightly faster in my tests.
+
+Threads share memory inside one process, while multiprocessing uses separate processes and passes items through a queue.
+
+Python's Global Interpreter Lock (GIL) limits the execution of CPU-bound Python code in threads. Multiprocessing can use multiple CPU cores for CPU-bound work.
+
+My programs mainly use `time.sleep()` to simulate waiting. Because of this, the GIL was not a major problem in these tests.
+
+Multiprocessing also has more overhead from creating processes and passing data between them.
+
+## 5. Conclusion
+
+Both versions worked correctly in my tests.
+
+Threading had a slightly lower average execution time for this workload. However, the difference was small, and the results may change with a different workload.
+
+## 6. Limitations
+
+I only tested a small workload with 2 producers and 2 consumers. I did not test a CPU-heavy workload. More testing would be needed to compare their performance in other situations.
+
+## 7. Additional Tests
+
+I also tested both programs with a buffer size of 1.
+
+Threading: 1.0110 seconds
+Multiprocessing: 1.0197 seconds
+
+Both programs finished without getting stuck, and the
+buffer was empty at the end.
+
+I also tested both programs with 3 producers and
+3 consumers. Each producer created 5 items, so
+15 items were expected in total.
+
+Threading: 1.0581 seconds
+Multiprocessing: 1.0322 seconds
+
+Both programs finished successfully, and the buffer
+was empty at the end.
+
+After testing, I changed the settings back to
+2 producers, 2 consumers, and a buffer size of 3.
